@@ -1,3 +1,5 @@
+import json
+
 import requests
 from FaaSr_py.client.py_client_stubs import faasr_log, faasr_put_file, faasr_secret
 
@@ -36,7 +38,6 @@ def fetch_weather_data(url: str, output_name: str) -> dict:
         weather_data = response.json()
 
         with open(output_name, "w") as f:
-            import json
             json.dump(weather_data, f, indent=2)
 
         return weather_data
@@ -46,7 +47,9 @@ def fetch_weather_data(url: str, output_name: str) -> dict:
         raise e
 
 
-def get_weather_data(folder_name: str, output_name: str, lat: str, lon: str, location_name: str):
+def get_weather_data(
+    folder_name: str, output_name: str, lat: str, lon: str, location_name: str
+):
     """
     Fetch 5-day forecast data (3-hour intervals) from OpenWeather API using a secret API key
     and upload it to an S3 bucket.
@@ -69,13 +72,17 @@ def get_weather_data(folder_name: str, output_name: str, lat: str, lon: str, loc
 
     # 2. Build the URL
     url = build_url(lat, lon, api_key)
-    faasr_log(f"Fetching 5-day forecast data (3-hour intervals) for {location_name} (lat={lat}, lon={lon})")
+    faasr_log(
+        f"Fetching 5-day forecast data (3-hour intervals) for {location_name} (lat={lat}, lon={lon})"
+    )
 
     # 3. Fetch the weather data and save to local file
     weather_data = fetch_weather_data(url, output_name)
-    city_name = weather_data.get('city', {}).get('name', 'Unknown')
-    num_timestamps = len(weather_data.get('list', []))
-    faasr_log(f"Fetched forecast data for {city_name}: {num_timestamps} timestamps (3-hour intervals)")
+    city_name = weather_data.get("city", {}).get("name", "Unknown")
+    num_timestamps = len(weather_data.get("list", []))
+    faasr_log(
+        f"Fetched forecast data for {city_name}: {num_timestamps} timestamps (3-hour intervals)"
+    )
 
     # 4. Upload the file to the S3 bucket
     faasr_put_file(

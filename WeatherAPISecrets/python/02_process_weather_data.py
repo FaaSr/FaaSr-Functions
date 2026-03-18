@@ -19,7 +19,7 @@ def get_input_data(folder_name: str, input_name: str) -> dict:
         remote_folder=folder_name,
         remote_file=input_name,
     )
-    
+
     with open(input_name, "r") as f:
         return json.load(f)
 
@@ -36,7 +36,7 @@ def extract_weather_metrics(weather_data: dict) -> dict:
     """
     city_info = weather_data.get("city", {})
     forecast_list = weather_data.get("list", [])
-    
+
     timestamps = []
     temperatures = []
     feels_like_temps = []
@@ -45,7 +45,7 @@ def extract_weather_metrics(weather_data: dict) -> dict:
     wind_speeds = []
     precipitation_probs = []
     descriptions = []
-    
+
     for entry in forecast_list:
         timestamps.append(entry.get("dt_txt", ""))
         temperatures.append(entry.get("main", {}).get("temp", 0))
@@ -55,7 +55,7 @@ def extract_weather_metrics(weather_data: dict) -> dict:
         wind_speeds.append(entry.get("wind", {}).get("speed", 0))
         precipitation_probs.append(entry.get("pop", 0) * 100)
         descriptions.append(entry.get("weather", [{}])[0].get("description", "N/A"))
-    
+
     metrics = {
         "city": city_info.get("name", "Unknown"),
         "country": city_info.get("country", "Unknown"),
@@ -71,7 +71,7 @@ def extract_weather_metrics(weather_data: dict) -> dict:
         "descriptions": descriptions,
         "num_timestamps": len(timestamps),
     }
-    
+
     return metrics
 
 
@@ -109,8 +109,10 @@ def process_weather_data(folder_name: str, input_name: str, output_name: str):
 
     # 2. Extract weather metrics
     metrics = extract_weather_metrics(weather_data)
-    faasr_log(f"Extracted {metrics['num_timestamps']} forecast timestamps (3-hour intervals) for "
-              f"{metrics['city']}, {metrics['country']}")
+    faasr_log(
+        f"Extracted {metrics['num_timestamps']} forecast timestamps (3-hour intervals) for "
+        f"{metrics['city']}, {metrics['country']}"
+    )
 
     # 3. Save the processed data
     save_processed_data(folder_name, output_name, metrics)

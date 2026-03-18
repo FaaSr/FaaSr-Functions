@@ -169,7 +169,6 @@ def fetch_weather_data(url: str, output_name: str) -> dict:
         weather_data = response.json()
 
         with open(output_name, "w") as f:
-            import json
             json.dump(weather_data, f, indent=2)
 
         return weather_data
@@ -182,7 +181,9 @@ def fetch_weather_data(url: str, output_name: str) -> dict:
 Now for the main function that demonstrates using `faasr_secret()`:
 
 ```python
-def get_weather_data(folder_name: str, output_name: str, lat: str, lon: str, location_name: str):
+def get_weather_data(
+    folder_name: str, output_name: str, lat: str, lon: str, location_name: str
+):
     """
     Fetch 5-day forecast data (3-hour intervals) from OpenWeather API using a secret API key
     and upload it to an S3 bucket.
@@ -205,13 +206,17 @@ def get_weather_data(folder_name: str, output_name: str, lat: str, lon: str, loc
 
     # 2. Build the URL
     url = build_url(lat, lon, api_key)
-    faasr_log(f"Fetching 5-day forecast data (3-hour intervals) for {location_name} (lat={lat}, lon={lon})")
+    faasr_log(
+        f"Fetching 5-day forecast data (3-hour intervals) for {location_name} (lat={lat}, lon={lon})"
+    )
 
     # 3. Fetch the weather data and save to local file
     weather_data = fetch_weather_data(url, output_name)
-    city_name = weather_data.get('city', {}).get('name', 'Unknown')
-    num_timestamps = len(weather_data.get('list', []))
-    faasr_log(f"Fetched forecast data for {city_name}: {num_timestamps} timestamps (3-hour intervals)")
+    city_name = weather_data.get("city", {}).get("name", "Unknown")
+    num_timestamps = len(weather_data.get("list", []))
+    faasr_log(
+        f"Fetched forecast data for {city_name}: {num_timestamps} timestamps (3-hour intervals)"
+    )
 
     # 4. Upload the file to the S3 bucket
     faasr_put_file(
@@ -363,8 +368,10 @@ def process_weather_data(folder_name: str, input_name: str, output_name: str):
 
     # 2. Extract weather metrics
     metrics = extract_weather_metrics(weather_data)
-    faasr_log(f"Extracted {metrics['num_timestamps']} forecast timestamps (3-hour intervals) for "
-              f"{metrics['city']}, {metrics['country']}")
+    faasr_log(
+        f"Extracted {metrics['num_timestamps']} forecast timestamps (3-hour intervals) for "
+        f"{metrics['city']}, {metrics['country']}"
+    )
 
     # 3. Save the processed data
     save_processed_data(folder_name, output_name, metrics)
@@ -427,8 +434,10 @@ def create_weather_visualization(metrics: dict, output_name: str) -> None:
         metrics: The processed forecast metrics.
         output_name: The name of the output file to save the plot to.
     """
-    datetime_objects = [datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in metrics["timestamps"]]
-    
+    datetime_objects = [
+        datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in metrics["timestamps"]
+    ]
+
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     fig.suptitle(
         f"5-Day Forecast for {metrics['city']}, {metrics['country']}\n"
@@ -437,12 +446,25 @@ def create_weather_visualization(metrics: dict, output_name: str) -> None:
         fontweight="bold",
     )
 
-    # Temperature Forecast (with Feels Like)
+    # Temperature Forecast
     ax1 = axes[0, 0]
-    ax1.plot(datetime_objects, metrics["temperature"], 
-             color="#e74c3c", linewidth=2, label="Temperature", alpha=0.8)
-    ax1.plot(datetime_objects, metrics["feels_like"], 
-             color="#f39c12", linewidth=2, linestyle="--", label="Feels Like", alpha=0.6)
+    ax1.plot(
+        datetime_objects,
+        metrics["temperature"],
+        color="#e74c3c",
+        linewidth=2,
+        label="Temperature",
+        alpha=0.8,
+    )
+    ax1.plot(
+        datetime_objects,
+        metrics["feels_like"],
+        color="#f39c12",
+        linewidth=2,
+        linestyle="--",
+        label="Feels Like",
+        alpha=0.6,
+    )
     ax1.set_ylabel("Temperature (°C)")
     ax1.set_title("Temperature Forecast")
     ax1.legend(loc="best")
@@ -452,10 +474,16 @@ def create_weather_visualization(metrics: dict, output_name: str) -> None:
 
     # Humidity Forecast
     ax2 = axes[0, 1]
-    ax2.fill_between(datetime_objects, metrics["humidity"], 
-                     color="#16a085", alpha=0.5, label="Humidity")
-    ax2.plot(datetime_objects, metrics["humidity"], 
-             color="#16a085", linewidth=2, alpha=0.8)
+    ax2.fill_between(
+        datetime_objects,
+        metrics["humidity"],
+        color="#16a085",
+        alpha=0.5,
+        label="Humidity",
+    )
+    ax2.plot(
+        datetime_objects, metrics["humidity"], color="#16a085", linewidth=2, alpha=0.8
+    )
     ax2.set_ylabel("Humidity (%)")
     ax2.set_title("Humidity Forecast")
     ax2.set_ylim(0, 100)
@@ -465,10 +493,20 @@ def create_weather_visualization(metrics: dict, output_name: str) -> None:
 
     # Precipitation Probability
     ax3 = axes[1, 0]
-    ax3.fill_between(datetime_objects, metrics["precipitation_probability"], 
-                     color="#3498db", alpha=0.5, label="Precipitation Prob.")
-    ax3.plot(datetime_objects, metrics["precipitation_probability"], 
-             color="#3498db", linewidth=2, alpha=0.8)
+    ax3.fill_between(
+        datetime_objects,
+        metrics["precipitation_probability"],
+        color="#3498db",
+        alpha=0.5,
+        label="Precipitation Prob.",
+    )
+    ax3.plot(
+        datetime_objects,
+        metrics["precipitation_probability"],
+        color="#3498db",
+        linewidth=2,
+        alpha=0.8,
+    )
     ax3.set_ylabel("Precipitation Probability (%)")
     ax3.set_title("Precipitation Probability Forecast")
     ax3.set_ylim(0, 100)
@@ -478,10 +516,16 @@ def create_weather_visualization(metrics: dict, output_name: str) -> None:
 
     # Wind Speed Forecast
     ax4 = axes[1, 1]
-    ax4.fill_between(datetime_objects, metrics["wind_speed"], 
-                     color="#27ae60", alpha=0.5, label="Wind Speed")
-    ax4.plot(datetime_objects, metrics["wind_speed"], 
-             color="#27ae60", linewidth=2, alpha=0.8)
+    ax4.fill_between(
+        datetime_objects,
+        metrics["wind_speed"],
+        color="#27ae60",
+        alpha=0.5,
+        label="Wind Speed",
+    )
+    ax4.plot(
+        datetime_objects, metrics["wind_speed"], color="#27ae60", linewidth=2, alpha=0.8
+    )
     ax4.set_ylabel("Wind Speed (m/s)")
     ax4.set_title("Wind Speed Forecast")
     ax4.grid(True, alpha=0.3)
