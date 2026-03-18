@@ -48,6 +48,10 @@ flowchart LR
   02 --> 03
 ```
 
+Here is an example of the plot that we will be creating:
+
+![Weather API Secrets Workflow Example Plot](../assets/weather-api-plot-600px.png)
+
 This workflow demonstrates:
 
 - Securely retrieving API keys using `faasr_secret()`
