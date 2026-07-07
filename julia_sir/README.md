@@ -23,7 +23,6 @@ Each step uses the FaaSr API (`faasr_get_file` / `faasr_put_file`) to move files
 
 Import `julia_sir.json` into the Web UI, set your GitHub username under the `GH` compute server, download it, and register/invoke it from your FaaSr-workflow repository — the same flow as the [tutorial](https://faasr.io/FaaSr-Docs/tutorial/). The Python step needs `numpy` and `pandas` (declared in the workflow as PyPI dependencies); the Julia step needs `CSV` and `DataFrames` (baked into the Julia container).
 
-## Notes on the containers
+## Containers
 
-- The Python and R actions use the official `ghcr.io/faasr/github-actions-python` and `ghcr.io/faasr/github-actions-r` images.
-- The Julia action currently uses an **interim** image, `ghcr.io/ashish-ramrakhiani/github-actions-julia:latest`, built from the `base-julia` image. Once an official `ghcr.io/faasr/github-actions-julia` image is published, the `solve` entry in `julia_sir.json` should be updated to point at it.
+The workflow uses the official FaaSr GitHub Actions container images: `ghcr.io/faasr/github-actions-python` for the Python action, `ghcr.io/faasr/github-actions-r` for the R action, and `ghcr.io/faasr/github-actions-julia` for the Julia action.

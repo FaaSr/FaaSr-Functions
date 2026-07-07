@@ -40,7 +40,7 @@
   },
   "ActionContainers": {
     "getData": "ghcr.io/faasr/github-actions-python:latest",
-    "solve": "ghcr.io/ashish-ramrakhiani/github-actions-julia:latest",
+    "solve": "ghcr.io/faasr/github-actions-julia:latest",
     "processData": "ghcr.io/faasr/github-actions-r:latest"
   },
   "FunctionGitRepo": {
