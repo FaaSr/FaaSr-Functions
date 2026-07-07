@@ -26,4 +26,4 @@ Import `julia_sir.json` into the Web UI, set your GitHub username under the `GH`
 ## Notes on the containers
 
 - The Python and R actions use the official `ghcr.io/faasr/github-actions-python` and `ghcr.io/faasr/github-actions-r` images.
-- The Julia action currently uses an **interim** image, `ghcr.io/ashish-ramrakhiani/github-actions-julia:2.1.0`, built from the `base-julia` image. Once an official `ghcr.io/faasr/github-actions-julia` image is published, the `solve` entry in `julia_sir.json` should be updated to point at it.
+- The Julia action currently uses an **interim** image, `ghcr.io/ashish-ramrakhiani/github-actions-julia:latest`, built from the `base-julia` image. Once an official `ghcr.io/faasr/github-actions-julia` image is published, the `solve` entry in `julia_sir.json` should be updated to point at it.
