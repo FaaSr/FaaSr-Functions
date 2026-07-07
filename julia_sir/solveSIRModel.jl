@@ -27,19 +27,9 @@ function solveSIRModel()
     R_null = Beta / Gamma
 
     u0 = [S0, I0, R0]
-    tspan = (0.0, tmax)
     p = (Beta, Gamma, N)
 
-    # NOTE: The ODE solver below (OrdinaryDiffEq / DifferentialEquations) is the
-    # preferred way to integrate the SIR model. It is commented out because the
-    # default github-actions-julia container does not bake in OrdinaryDiffEq, and
-    # FaaSr has no runtime Julia-package install mechanism, so the heavy runtime
-    # precompile is impractical. To use it, build a container that pre-installs
-    # OrdinaryDiffEq and uncomment the two lines below (and `using OrdinaryDiffEq`).
-    # prob = ODEProblem(sirModel!, u0, tspan, p)
-    # sol = solve(prob, Tsit5())
-
-    # Toy data: simple Euler integration
+    # Integrate the SIR model with a simple Euler scheme
     dt = 1.0
     t = collect(0.0:dt:tmax)
     n = length(t)

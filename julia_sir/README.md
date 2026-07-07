@@ -27,7 +27,3 @@ Import `julia_sir.json` into the Web UI, set your GitHub username under the `GH`
 
 - The Python and R actions use the official `ghcr.io/faasr/github-actions-python` and `ghcr.io/faasr/github-actions-r` images.
 - The Julia action currently uses an **interim** image, `ghcr.io/ashish-ramrakhiani/github-actions-julia:2.1.0`, built from the `base-julia` image. Once an official `ghcr.io/faasr/github-actions-julia` image is published, the `solve` entry in `julia_sir.json` should be updated to point at it.
-
-## Using a real ODE solver (`OrdinaryDiffEq`)
-
-`solveSIRModel.jl` currently integrates the model with a simple Euler step. The commented-out `ODEProblem` / `solve(prob, Tsit5())` lines use Julia's `OrdinaryDiffEq` solver, which is the preferred approach. `OrdinaryDiffEq` installs and runs correctly on the `base-julia` image, but it is a large package whose runtime precompilation is impractical inside an action — and FaaSr has no runtime Julia-package install mechanism. To use it, **bake `OrdinaryDiffEq` into the Julia container** (add it to the `base-julia` Dockerfile's `Pkg.add` list so it is precompiled at build time), then uncomment the solver lines and add `using OrdinaryDiffEq`.
