@@ -1,5 +1,6 @@
 using CSV
 using DataFrames
+using OrdinaryDiffEq
 
 function sirModel!(du, u, p, t)
     S, I, R = u
@@ -23,29 +24,20 @@ function solveSIRModel()
     R0 = data.R0[1]
     tmax = data.tmax[1]
 
-    # Basic reproduction number
-    R_null = Beta / Gamma
-
     u0 = [S0, I0, R0]
+    tspan = (0.0, Float64(tmax))
     p = (Beta, Gamma, N)
 
-    # Integrate the SIR model with a simple Euler scheme
-    dt = 1.0
-    t = collect(0.0:dt:tmax)
-    n = length(t)
-    S = zeros(n)
-    I = zeros(n)
-    R = zeros(n)
-    S[1], I[1], R[1] = u0
-    du = zeros(3)
-    for i in 2:n
-        sirModel!(du, [S[i-1], I[i-1], R[i-1]], p, t[i-1])
-        S[i] = S[i-1] + dt * du[1]
-        I[i] = I[i-1] + dt * du[2]
-        R[i] = R[i-1] + dt * du[3]
-    end
+    # Integrate the SIR model with the OrdinaryDiffEq solver (Tsit5),
+    # sampling once per day so the output matches the downstream format.
+    prob = ODEProblem(sirModel!, u0, tspan, p)
+    sol = solve(prob, Tsit5(), saveat=1.0)
 
-    out_df = DataFrame(time=t, S=S, I=I, R=R)
+    S = [u[1] for u in sol.u]
+    I = [u[2] for u in sol.u]
+    R = [u[3] for u in sol.u]
+    out_df = DataFrame(time=sol.t, S=S, I=I, R=R)
+
     outName = "sir_output.csv"
     CSV.write(outName, out_df)
     faasr_put_file(outName, outName)
