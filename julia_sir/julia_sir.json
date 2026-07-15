@@ -1,0 +1,59 @@
+{
+  "ActionList": {
+    "getData": {
+      "FunctionName": "getSIRData",
+      "FaaSServer": "GH",
+      "Type": "Python",
+      "Arguments": {},
+      "InvokeNext": ["solve"]
+    },
+    "solve": {
+      "FunctionName": "solveSIRModel",
+      "FaaSServer": "GH",
+      "Type": "Julia",
+      "Arguments": {},
+      "InvokeNext": ["processData"]
+    },
+    "processData": {
+      "FunctionName": "processSIRData",
+      "FaaSServer": "GH",
+      "Type": "R",
+      "Arguments": {},
+      "InvokeNext": []
+    }
+  },
+  "ComputeServers": {
+    "GH": {
+      "FaaSType": "GitHubActions",
+      "UserName": "YOUR_USERNAME",
+      "UseSecretStore": true,
+      "ActionRepoName": "FaaSr-workflow",
+      "Branch": "main"
+    }
+  },
+  "DataStores": {
+    "S3": {
+      "Endpoint": "https://play.min.io",
+      "Bucket": "faasr",
+      "Region": "us-east-1"
+    }
+  },
+  "ActionContainers": {
+    "getData": "ghcr.io/faasr/github-actions-python:latest",
+    "solve": "ghcr.io/faasr/github-actions-julia:latest",
+    "processData": "ghcr.io/faasr/github-actions-r:latest"
+  },
+  "FunctionGitRepo": {
+    "getSIRData": "FaaSr/FaaSr-Functions/julia_sir",
+    "solveSIRModel": "FaaSr/FaaSr-Functions/julia_sir",
+    "processSIRData": "FaaSr/FaaSr-Functions/julia_sir"
+  },
+  "PyPIPackageDownloads": {
+    "getSIRData": ["numpy", "pandas"]
+  },
+  "FunctionInvoke": "getData",
+  "DefaultDataStore": "S3",
+  "LoggingDataStore": "S3",
+  "FaaSrLog": "FaaSrLog",
+  "WorkflowName": "SIRModelWorkflow"
+}
